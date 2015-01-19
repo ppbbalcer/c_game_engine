@@ -1,5 +1,5 @@
-#ifndef OBJECTS_RENDER
-#define OBJECTS_RENDER
+#ifndef OBJECTS_RENDER_H
+#define OBJECTS_RENDER_H
 
 #include "common/objects.h"
 #include <stdbool.h>
@@ -12,4 +12,4 @@ bool line_obj_render(SDL_Renderer *ren, void *line);
 bool world_obj_render(SDL_Renderer *ren, void *obj, enum world_object type);
 
 
-#endif /* OBJECTS_RENDER */
+#endif /* OBJECTS_RENDER_H */

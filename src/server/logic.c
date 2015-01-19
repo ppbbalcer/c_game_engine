@@ -1,5 +1,4 @@
 #include "logic.h"
-#include "common/objects.h"
 #include <stdlib.h>
 
 struct worldobj_line *line;
