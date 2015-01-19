@@ -29,10 +29,12 @@ bool render_start() {
 
 bool render_stop() {
 	SDL_Quit();
+	return true;
 }
 
 bool world_obj_callback(void *obj, enum world_object type) {
 	world_obj_render(ren, obj, type);
+	return true;
 }
 
 bool render_do(logic_loop_func logic_loop, get_uinput_func get_uinput, world_obj_iterate_func world_obj_iterate) {
@@ -52,4 +54,5 @@ bool render_do(logic_loop_func logic_loop, get_uinput_func get_uinput, world_obj
 		if ((frame_ticks = SDL_GetTicks() - cap_timer) < TICKS_PER_FRAME)
 			SDL_Delay(TICKS_PER_FRAME - frame_ticks);
 	}
+	return true;
 }

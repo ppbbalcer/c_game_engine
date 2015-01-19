@@ -7,6 +7,7 @@ bool main_logic_loop(double dt, struct uinput *input) {
 	if (input->reset && line != NULL) {
 		line->pos = 0;
 	}
+	return true;
 }
 
 bool world_obj_iterate(world_obj_callback_func callback) {
@@ -24,4 +25,5 @@ bool logic_init() {
 
 bool logic_cleanup() {
 	free(line);
+	return true;
 }
