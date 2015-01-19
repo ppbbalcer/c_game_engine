@@ -24,5 +24,5 @@ bool logic_init() {
 }
 
 bool logic_cleanup() {
-
+	free(line);
 }
