@@ -2,6 +2,7 @@
 #define UINPUT_H
 
 struct uinput {
+	int jump;
 	int reset;
 };
 

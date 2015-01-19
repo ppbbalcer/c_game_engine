@@ -1,6 +1,7 @@
 #include "render.h"
 #include "objects_render.h"
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include "config.h"
 
 static const struct uinput empty_input;
 
@@ -12,7 +13,7 @@ bool render_start() {
 		printf("SDL_Init: %s\n", SDL_GetError());
 		return false;
 	}
-	win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	win = SDL_CreateWindow("Hello World!", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 	if (win == NULL){
 		SDL_Quit();
 		return false;
@@ -24,6 +25,9 @@ bool render_start() {
 		SDL_Quit();
 		return 1;
 	}
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glPointSize(20);
 	return true;
 }
 
@@ -32,7 +36,7 @@ bool render_stop() {
 	return true;
 }
 
-bool world_obj_callback(void *obj, enum world_object type) {
+bool world_obj_callback(const void *obj, enum world_object type) {
 	world_obj_render(ren, obj, type);
 	return true;
 }

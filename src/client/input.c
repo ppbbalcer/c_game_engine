@@ -11,6 +11,9 @@ bool get_input(struct uinput *input) {
 		} else if (event.type == SDL_KEYUP) {
 			switch(event.key.keysym.sym) {
 				case SDLK_SPACE:
+					input->jump = 1;
+					break;
+				case SDLK_UP:
 					input->reset = 1;
 					break;
 			}

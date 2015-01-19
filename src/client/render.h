@@ -5,9 +5,6 @@
 #include "common/uinput.h"
 #include "common/objects.h"
 
-#define FPS_CAP 60
-#define TICKS_PER_FRAME (1000 / FPS_CAP)
-
 typedef bool (*logic_loop_func)(double dt, struct uinput *input);
 typedef bool (*get_uinput_func)(struct uinput *input);
 
