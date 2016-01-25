@@ -4,7 +4,7 @@
 #include "config.h"
 #include "render.h"
 
-#define ROLLIN_VELOCITY 500
+#define ROLLIN_VELOCITY 200
 
 static struct classic_input in;
 
@@ -66,6 +66,7 @@ logic(void *scene, float dt)
 		resources_play_sound(SOUND_START);
 		in.a = 0;
 		timer_init(2, 0, resume_menu_music, NULL);
+		timer_init(0.1, 10, text_blink, m->txt);
 	}
 
 	OBJECT_LOGIC(m->ball);
@@ -99,7 +100,7 @@ boot(void *scene, void *args)
 	m->txt->pos.x = (BASE_WIDTH - (strlen("> PRESS START") * 8))/2;
 	m->txt->pos.y = (BASE_HEIGHT / 2) - 16;
 	m->txt->visible = true;
-	//timer_init(0.4, -1, text_blink, m->txt);
+
 
 	memset(m->map[20], 0xFF, MAP_WIDTH);
 	memset(m->map[0], 0xFF, MAP_WIDTH);
