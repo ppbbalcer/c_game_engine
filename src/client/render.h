@@ -2,14 +2,17 @@
 #define RENDER_H
 
 #include <stdbool.h>
-#include "common/uinput.h"
-#include "common/objects.h"
-
-typedef bool (*logic_loop_func)(double dt, struct uinput *input);
-typedef bool (*get_uinput_func)(struct uinput *input);
+#include "scene.h"
 
 bool render_start();
 bool render_stop();
-bool render_do(logic_loop_func logic_loop, get_uinput_func get_uinput, world_obj_iterate_func world_obj_iterate);
+bool render_do();
+struct positionf *render_camera();
+
+#define CAM_X(_x)\
+((_x) + render_camera()->x)
+
+#define CAM_Y(_y)\
+((_y) + render_camera()->y)
 
 #endif /* RENDER_H */

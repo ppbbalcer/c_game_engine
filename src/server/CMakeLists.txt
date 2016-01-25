@@ -1,7 +1,6 @@
 set(server_src
-	logic.c
-	logic.h
+	main.c
 )
-add_library(server ${server_src})
+add_executable(server ${server_src})
 
-target_link_libraries(server util)
+target_link_libraries(server util common uv)

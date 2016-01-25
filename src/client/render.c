@@ -1,14 +1,20 @@
-#include "render.h"
-#include "objects_render.h"
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+
+#include "render.h"
+#include "resources.h"
 #include "config.h"
+#include "timer.h"
 
-static const struct uinput empty_input;
+static SDL_Window *win;
+static SDL_Renderer *ren;
 
-SDL_Window *win;
-SDL_Renderer *ren;
+static struct positionf camera = {0, 0};
 
-bool render_start() {
+bool
+render_start()
+{
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		printf("SDL_Init: %s\n", SDL_GetError());
 		return false;
@@ -16,6 +22,16 @@ bool render_start() {
 	win = SDL_CreateWindow("Hello World!", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 	if (win == NULL){
 		SDL_Quit();
+		return false;
+	}
+
+	if (!(IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG) ) {
+		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+		return false;
+	}
+
+	if (Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0) {
+		printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
 		return false;
 	}
 
@@ -28,35 +44,66 @@ bool render_start() {
 	glEnable(GL_POINT_SMOOTH);
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 	glPointSize(20);
+
+	resources_load(ren);
+
 	return true;
 }
 
-bool render_stop() {
+bool
+render_stop()
+{
 	SDL_Quit();
 	return true;
 }
 
-bool world_obj_callback(const void *obj, enum world_object type) {
-	world_obj_render(ren, obj, type);
+bool
+render_do()
+{
+	bool quit = false;
+	Uint32 cap_timer;
+	Uint32 frame_ticks;
+	Uint32 logic_timer;
+	float dt = 0.f;
+	SDL_Texture *t = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BASE_WIDTH, BASE_HEIGHT);
+
+	struct scene *scene;
+	while (!quit) {
+		scene = scene_get_current();
+
+		cap_timer = SDL_GetTicks();
+		logic_timer = SDL_GetTicks();
+
+		quit = scene->input(scene->in);
+
+		timer_process_all(dt);
+
+		scene->super.logic(scene, dt);
+
+		SDL_SetRenderTarget(ren, t);
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0xFF);
+		SDL_RenderClear(ren);
+
+		scene->super.render(scene, ren);
+
+		SDL_SetRenderTarget(ren, NULL);
+		SDL_RenderCopy(ren, t, NULL, NULL);
+
+		SDL_RenderPresent(ren);
+
+		frame_ticks = SDL_GetTicks() - cap_timer;
+		if (frame_ticks < TICKS_PER_FRAME)
+			SDL_Delay(TICKS_PER_FRAME - frame_ticks);
+
+		logic_timer = SDL_GetTicks() - logic_timer;
+
+		dt = logic_timer / 1000.f;
+	}
 	return true;
 }
 
-bool render_do(logic_loop_func logic_loop, get_uinput_func get_uinput, world_obj_iterate_func world_obj_iterate) {
-	bool quit = false;
-	int cap_timer;
-	int frame_ticks;
-	struct uinput input;
-	while (!quit) {
-		input = empty_input;
-		cap_timer = SDL_GetTicks();
-		quit = get_uinput(&input);
-		logic_loop(0, &input);
-		SDL_SetRenderDrawColor(ren, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(ren);
-		world_obj_iterate(world_obj_callback);
-		SDL_RenderPresent(ren);
-		if ((frame_ticks = SDL_GetTicks() - cap_timer) < TICKS_PER_FRAME)
-			SDL_Delay(TICKS_PER_FRAME - frame_ticks);
-	}
-	return true;
+struct positionf *
+render_camera()
+{
+	return &camera;
 }

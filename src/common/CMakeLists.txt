@@ -1,7 +1,8 @@
 set(common_src
-	uinput.c
-	uinput.h
-	objects.c
-	objects.h
+	common.c
+	common.h
 )
+
 add_library(common ${common_src})
+
+target_link_libraries(common)
