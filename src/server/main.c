@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-#include <uv.h>
 
 #define SERVER_PORT 8900
 
